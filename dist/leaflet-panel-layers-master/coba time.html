@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peta Jadwal Kereta</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-sidebar-v2/3.2.1/css/leaflet-sidebar.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-sidebar-v2/3.2.1/js/leaflet-sidebar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        #map { height: 100vh; }
+        .sidebar-content { padding: 10px; }
+        .station-list { list-style-type: none; padding: 0; }
+        .station-list li { cursor: pointer; padding: 5px; border-bottom: 1px solid #ccc; }
+        .station-list li:hover { background-color: #f0f0f0; }
+    </style>
+</head>
+<body>
+
+<div id="sidebar" class="leaflet-sidebar collapsed">
+    <div class="leaflet-sidebar-tabs">
+        <ul role="tablist">
+            <li><a href="#home" role="tab"><i class="fa fa-train"></i></a></li>
+        </ul>
+    </div>
+    <div class="leaflet-sidebar-content">
+        <div class="leaflet-sidebar-pane" id="home">
+            <h2>Jadwal GAPPEKA 2024</h2>
+            <label>Pilih Waktu:</label>
+            <input type="text" id="timePicker" placeholder="Pilih waktu">
+            <h3>Stasiun:</h3>
+            <ul id="stationList" class="station-list"></ul>
+        </div>
+    </div>
+</div>
+
+<div id="map"></div>
+
+<script>
+    // Inisialisasi peta
+    var map = L.map('map').setView([-7.250445, 112.768845], 10);
+    
+    // Peta dasar
+    var baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Sidebar
+    var sidebar = L.control.sidebar({ container: 'sidebar' }).addTo(map);
+
+    // Data Stasiun
+    var stations = [
+        { name: "Semarang Poncol", lat: -6.971, lon: 110.420, time: "08:10" },
+        { name: "Semarang Tawang", lat: -6.966, lon: 110.428, time: "08:17" },
+        { name: "Bojonegoro", lat: -7.154, lon: 111.882, time: "10:27" },
+        { name: "Lamongan", lat: -7.123, lon: 112.002, time: "12:00" },
+        { name: "Surabaya Pasar Turi", lat: -7.245, lon: 112.732, time: "12:37" }
+    ];
+
+    // Menampilkan daftar stasiun di sidebar
+    var stationList = document.getElementById("stationList");
+    stations.forEach(function(station) {
+        var li = document.createElement("li");
+        li.textContent = station.name + " (" + station.time + ")";
+        li.onclick = function() {
+            map.setView([station.lat, station.lon], 14);
+        };
+        stationList.appendChild(li);
+    });
+
+    // Time Picker
+    flatpickr("#timePicker", {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: "H:i",
+        defaultDate: "08:10",
+        onChange: function(selectedDates, dateStr) {
+            var nearestStation = stations.reduce(function(prev, curr) {
+                return Math.abs(moment(curr.time, "HH:mm").diff(moment(dateStr, "HH:mm"), 'minutes')) <
+                       Math.abs(moment(prev.time, "HH:mm").diff(moment(dateStr, "HH:mm"), 'minutes')) ? curr : prev;
+            });
+
+            map.setView([nearestStation.lat, nearestStation.lon], 14);
+        }
+    });
+
+    // Layer Stasiun
+    var stationLayer = L.layerGroup();
+    stations.forEach(function(station) {
+        L.marker([station.lat, station.lon])
+            .bindPopup("<b>" + station.name + "</b><br>Jam: " + station.time)
+            .addTo(stationLayer);
+    });
+
+    // Layer Jalur
+    var railwayLayer1 = new L.GeoJSON.AJAX("data/jalur_1.json", {
+        style: { color: "#ff0000", weight: 3, opacity: 0.8 },
+        onEachFeature: function (feature, layer) {
+            layer.bindPopup("Jalur Semarang - Surabaya");
+        }
+    });
+
+    var railwayLayer2 = new L.GeoJSON.AJAX("data/jalur_2.json", {
+        style: { color: "#0000FF", weight: 3, opacity: 0.8 },
+        onEachFeature: function (feature, layer) {
+            layer.bindPopup("Jalur Surabaya - Semarang");
+        }
+    });
+
+    // Layer Control
+    var overlayMaps = {
+        "Stasiun": stationLayer,
+        "Jalur Semarang - Surabaya": railwayLayer1,
+        "Jalur Surabaya - Semarang": railwayLayer2
+    };
+
+    L.control.layers(null, overlayMaps, { collapsed: false }).addTo(map);
+
+    // Tambahkan semua layer ke peta
+    stationLayer.addTo(map);
+    railwayLayer1.addTo(map);
+    railwayLayer2.addTo(map);
+</script>
+
+</body>
+</html>

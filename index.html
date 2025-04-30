@@ -1,0 +1,1025 @@
+<!DOCTYPE html> 
+<html>
+
+<head>
+    <title>WEBGIS Perjalanan Kereta Api</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" rel="stylesheet" type="text/css" />    
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet" type="text/css" />   
+    <link href="https://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" rel="stylesheet" type="text/css" />    
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />    
+    <link href="dist/bootstrap-timepicker.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.0/leaflet.awesome-markers.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Girassol&family=Roboto&display=swap" rel="stylesheet">
+    
+    <link href="example_2.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="dist/leaflet-panel-layers-master/src/leaflet-panel-layers.css" />
+    <link rel="stylesheet" href="dist/leaflet-sidebar-v2-master/css/leaflet-sidebar.css" />
+    <link rel="stylesheet" href="dist/easy-button.css" />
+    <link rel="stylesheet" href="dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="dist/MarkerCluster.Default.css" />
+
+
+
+    <style>
+    #title_container {
+        z-index: 10000;
+        position: fixed;
+        left: 100px;
+    }
+
+    body {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+
+    h1 {
+        font-size: 36px;
+        font-weight: bold;
+        line-height: 1.1;
+    }
+
+    .datetimeControl p {
+        margin: 0;
+        font-size: 16px;
+    }
+    .icon {
+        display: inline-block;
+        margin: 2px;
+        height: 16px;
+        width: 16px;
+        background-color: #ccc;
+    }
+    /* ICONS */
+    .icon-bar {
+        background: url('images/jalur2.png') center center no-repeat;
+        height: 2px;
+        width: 16px;
+    }
+
+    .icon-drinking_water {
+        background: url('images/jalur.png') center center no-repeat;
+        height: 2px;
+        width: 16px;
+    }
+
+    .icon-fuel {
+        background: url('images/stasiun2.png') center center no-repeat;
+        height: 16px;
+        width: 16px;
+    }
+
+    #hidethis, #hidethis1, #hidethis2, #hidethis3, #hidethis4, #hidethis5, #hidethis6, #hidethis7, #hidethis8, #hidethis9, #hidethis10, #hidethis11, #hidethis12, #hidethis13, #hidethis14, #hidethis15, #hidethis16, #hidethis17, #hidethis18, #hidethis19, #hidethis20, #hidethis21, #hidethis22 {
+      font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 15px;
+    }
+
+    #hidethis td, #hidethis th, #hidethis1 td, #hidethis1 th, #hidethis2 td, #hidethis2 th, #hidethis3 td, #hidethis3 th, #hidethis4 td, #hidethis4 th, #hidethis5 td, #hidethis5 th, #hidethis6 td, #hidethis6 th, #hidethis7 td, #hidethis7 th, #hidethis8 td, #hidethis8 th, #hidethis9 td, #hidethis9 th, #hidethis10 td, #hidethis10 th, #hidethis11 td, #hidethis11 th, #hidethis12 td, #hidethis12 th, #hidethis13 td, #hidethis13 th, #hidethis14 td, #hidethis14 th, #hidethis15 td, #hidethis15 th, #hidethis16 td, #hidethis16 th, #hidethis17 td, #hidethis17 th, #hidethis18 td, #hidethis18 th, #hidethis19 td, #hidethis19 th, #hidethis20 td, #hidethis20 th, #hidethis21 td, #hidethis21 th, #hidethis22 td, #hidethis22 th {
+      border: 1px solid #ddd;
+      padding: 4px;
+      text-align: center;
+    }
+
+    #hidethis tr:nth-child(even), #hidethis1 tr:nth-child(even), #hidethis2 tr:nth-child(even), #hidethis3 tr:nth-child(even), #hidethis4 tr:nth-child(even), #hidethis5 tr:nth-child(even), #hidethis6 tr:nth-child(even), #hidethis7 tr:nth-child(even), #hidethis8 tr:nth-child(even), #hidethis9 tr:nth-child(even), #hidethis10 tr:nth-child(even), #hidethis11 tr:nth-child(even), #hidethis12 tr:nth-child(even), #hidethis13 tr:nth-child(even), #hidethis14 tr:nth-child(even), #hidethis15 tr:nth-child(even), #hidethis16 tr:nth-child(even), #hidethis17 tr:nth-child(even), #hidethis18 tr:nth-child(even), #hidethis19 tr:nth-child(even), #hidethis20 tr:nth-child(even), #hidethis21 tr:nth-child(even), #hidethis22 tr:nth-child(even) {background-color: #c5c5c5;}
+
+    #hidethis th, #hidethis1 th, #hidethis2 th, #hidethis3 th, #hidethis4 th, #hidethis5 th, #hidethis6 th, #hidethis7 th, #hidethis8 th, #hidethis9 th, #hidethis10 th, #hidethis11 th, #hidethis12 th, #hidethis13 th, #hidethis14 th, #hidethis15 th, #hidethis16 th, #hidethis17 th, #hidethis18 th, #hidethis19 th, #hidethis20 th, #hidethis21 th, #hidethis22 th {
+      padding-top: 8px;
+      padding-bottom: 8px;
+      text-align: center;
+      background-color: #4CAF50;
+      color: white;
+    }
+    .lorem {
+            font-style: italic;
+            text-align: justify;
+            color: #AAA;
+        }
+
+    .accordion-table {
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.5s ease-out;
+    }
+
+    .accordion-table.show {
+      max-height: 1000px;
+      transition: max-height 0.7s ease-in;
+    }
+
+    .toggle-btn i {
+      transition: transform 0.3s ease;
+      display: inline-block;
+    }
+
+    .toggle-btn.open i {
+      transform: rotate(180deg);
+    }
+
+    .btn {
+      cursor: pointer;
+      margin-bottom: 5px;
+    }
+
+    #legend ul,
+    #legend ol {
+      list-style-type: none;
+      padding-left: 0;
+      margin-left: 0;
+    }
+
+    table {
+      margin-bottom: 15px;
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    /* Print Styles */
+    @media print {
+      .leaflet-sidebar-header, .leaflet-sidebar-close, .toggle-btn {
+        display: none;
+      }
+
+      .accordion-table.show {
+        max-height: none !important;
+      }
+
+      body {
+        background-color: white;
+        color: black;
+      }
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 600px) {
+      .leaflet-sidebar-pane {
+        padding: 10px;
+      }
+
+      table {
+        font-size: 12px;
+      }
+    }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    
+                                                    <!-- Sidebar -->
+    <!-- optionally define the sidebar content via HTML markup -->
+    <div id="sidebar" class="leaflet-sidebar collapsed">
+
+        <!-- nav tabs -->
+        <div class="leaflet-sidebar-tabs">
+            <!-- top aligned tabs -->
+            <ul role="tablist">
+                <li><a href="#legend" role="tab"><i class="fa fa-map-signs" style="color: #1E90FF"></i></a></li>
+                <li><a href="#jadwal" role="tab"><i class="fa fa-train" style="color: #1E90FF"></i></a></li>
+            </ul>
+
+            <!-- bottom aligned tabs -->
+            <ul role="tablist">
+                <li><a href="#index.html"><i class="fa fa-home" style="font-size:20px; color: #1E90FF"></i></a></li>
+                <li><a href="#peta.html"><i class="fa fa-map-o" style="font-size:20px; color: #1E90FF"></i></a></li>
+                <li><a href="#index.html#tabs2-8"><i class="fa fa-pencil-square-o" style="font-size:20px; color: #1E90FF"></i></a></li>
+            </ul>
+        </div>
+
+        <!-- panel content atau Tab Panes -->
+        <div class="leaflet-sidebar-content">
+            <div class="leaflet-sidebar-pane" id="legend">
+                <h1 class="leaflet-sidebar-header">Legenda<span class="leaflet-sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+                <br>
+                <ul>
+                    <li><img src="images/train.png" width='30' alt="loko" title="Loko" class="sb-img">  Kereta</li><br>
+                    <li><img src="images/stasiun.png" width='30' alt="stasiun" title="Stasiun" class="sb-img">  Stasiun</li><br>
+                    <li><img src="images/jalur2.png" width='30' alt="loko" title="Loko" class="sb-img"> Rel Kereta Api Semarang - Surabaya</li><br>
+                    <li><img src="images/jalur.png" width='30' alt="loko" title="Loko" class="sb-img"> Rel Kereta Api Surabaya - Semarang</li><br>
+                </ul>
+
+                <ul>
+                  <h4>Kelas Kereta Api</h4>
+                  <li><img src="images/84.png" width='32' alt="loko" title="Loko" class="sb-img">Kelas Ekonomi</li>
+                  <li><img src="images/144.png" width='25' alt="loko" title="Loko" class="sb-img">Kelas Bisnis</li>
+                  <li><img src="images/307.png" width='30' alt="loko" title="Loko" class="sb-img">Kelas Eksekutif</li>
+                  <li><img src="images/145.png" width='30' alt="loko" title="Loko" class="sb-img">Campuran (Eksekutif dan Ekonomi)</li>
+                  <li><img src="images/141.png" width='30' alt="loko" title="Loko" class="sb-img">Campuran (Eksekutif dan Bisnis)</li>
+                </ul>
+
+                <ul>
+                <h4>Warna Ikon Kereta Api</h4>
+                <li><img src="images/84.png" width='32' alt="loko" title="Loko" class="sb-img">     KA Ambarawa Ekspres (269F dan 268F)</li>
+                <li><img src="images/84.png" width='32' alt="loko" title="Loko" class="sb-img">     KA Maharani (267 dan 268)</li>
+                <li><img src="images/84.png" width='32' alt="loko" title="Loko" class="sb-img">     KA Kertajaya (255 dan 256)</li>
+                <li><img src="images/307.png" width='30' alt="loko" title="Loko" class="sb-img">    KA Argo Bromo Anggrek (1, 2, 3, dan 4)</li>
+                <li><img src="images/307.png" width='30' alt="loko" title="Loko" class="sb-img">    KA Sembrani (77 dan 78)</li>
+                <li><img src="images/145.png" width='30' alt="loko" title="Loko" class="sb-img">    KA Dharmawangsa (129 dan 130)</li>
+                <li><img src="images/145.png" width='30' alt="loko" title="Loko" class="sb-img">    KA Jayabaya (108-105 dan 106-107)</li>
+                <li><img src="images/145.png" width='30' alt="loko" title="Loko" class="sb-img">    KA Harina (123-126 dan 125-124)</li>
+                <li><img src="images/141.png" width='30' alt="loko" title="Loko" class="sb-img">    KA Gumarang (127 dan 128)</li>
+                <li><img src="images/141.png" width='30' alt="loko" title="Loko" class="sb-img">    KA Blambangan Ekspres (240F-237F dan 238F-239F)</li>
+                </ul>
+            </div>
+
+            <div class="leaflet-sidebar-pane" id="jadwal">
+                <h1 class="leaflet-sidebar-header">
+                    Jadwal GAPEKA 2021
+                    <span class="leaflet-sidebar-close"><i class="fa fa-caret-left"></i></span>
+                </h1>
+
+                <h6>Pencarian jadwal berdasarkan kereta</h6> 
+                <h4 style="text-align:center">Semarang - Surabaya</h4>
+
+                <!-- Tombol Toggle Semua -->
+                <span class="btn btn-success btn-sm" id="toggleAllBtn" onClick="toggleAll();">Tampilkan Semua Jadwal</span>
+                <br><br>
+
+                <!-- KA Ambarawa Ekspres (268F) -->
+                <span class="btn btn-primary btn-sm toggle-btn" onClick="toggleById('hidethis1', this);">KA Ambarawa Ekspres (268F) <i class="fa fa-caret-down"></i></span><br>
+                
+                <div id="hidethis1" class="accordion-table">
+                <table border="2">
+                <tr>
+                  <th>No.</th>
+                  <th>Nama Stasiun</th>
+                  <th>Tiba</th>
+                  <th>Berangkat</th>
+                </tr>
+                <tr>
+                  <td>1</td>    <td>Semarang Poncol</td>    <td>-</td>  <td>08.10</td>
+                </tr>
+                <tr>
+                  <td>2</td>    <td>Semarang Tawang</td>   <td>08.17</td>  <td>08.21</td>
+                </tr>
+                <tr>
+                  <td>3</td>    <td>Ngrombo</td>   <td>09.09</td>  <td>09.12</td>
+                </tr>
+                <tr>
+                  <td>4</td>    <td>Kradenan</td>  <td>09.35</td>  <td>09.37</td>
+                </tr>
+                <tr>
+                  <td>5</td>    <td>Randublatung</td> <td>10.03</td>  <td>10.06</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Cepu</td>    <td>10.27</td>  <td>10.32</td>
+                </tr>
+                <tr>
+                  <td>7</td>    <td>Bojonegoro</td> <td>11.02</td>  <td>11.05</td>
+                </tr>
+                <tr>
+                  <td>8</td>    <td>Babat</td>    <td>11.35</td>  <td>11.38</td>
+                </tr>
+                <tr>
+                  <td>9</td>    <td>Lamongan</td>    <td>12.00</td>  <td>12.03</td>
+                </tr>
+                <tr>
+                  <td>10</td>    <td>Surabaya Pasar Turi</td>    <td>12.37</td>  <td>-</td>
+                </tr>
+                </table></div>
+
+                <!-- KA Maharani(268) -->
+                <span class="btn btn-primary btn-sm toggle-btn" onClick="toggleById('hidethis2', this);">KA Maharani (268) <i class="fa fa-caret-down"></i></span><br>
+                
+                <div id="hidethis2" class="accordion-table">
+                <table border="2">
+                <tr>
+                  <th>No.</th>
+                  <th>Nama Stasiun</th>
+                  <th>Tiba</th>
+                  <th>Berangkat</th>
+                </tr>
+                <tr>
+                  <td>1</td>    <td>Semarang Poncol</td>    <td>-</td>  <td>11.45</td>
+                </tr>
+                <tr>
+                  <td>2</td>    <td>Semarang Tawang</td>   <td>11.52</td>  <td>11.57</td>
+                </tr>
+                <tr>
+                  <td>3</td>    <td>Ngrombo</td>   <td>12.46</td>  <td>12.49</td>
+                </tr>
+                <tr>
+                  <td>4</td>    <td>Kradenan</td>  <td>13.13</td>  <td>13.15</td>
+                </tr>
+                <tr>
+                  <td>5</td>    <td>Randublatung</td> <td>13.41</td>  <td>13.44</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Cepu</td>    <td>14.07</td>  <td>14.13</td>
+                </tr>
+                <tr>
+                  <td>7</td>    <td>Bojonegoro</td> <td>14.43</td>  <td>14.46</td>
+                </tr>
+                <tr>
+                  <td>8</td>    <td>Babat</td>    <td>15.15</td>  <td>15.18</td>
+                </tr>
+                <tr>
+                  <td>9</td>    <td>Lamongan</td>    <td>15.41</td>  <td>15.44</td>
+                </tr>
+                <tr>
+                  <td>10</td>    <td>Surabaya Pasar Turi</td>    <td>16.18</td>  <td>-</td>
+                </tr>
+                </table></div>
+
+                <!-- KA Argo Bromo Anggrek (2) -->
+                <span class="btn btn-primary btn-sm toggle-btn" onClick="toggleById('hidethis3', this);">KA Argo Bromo Anggrek (2) <i class="fa fa-caret-down"></i></span><br>
+                
+                <div id="hidethis3" class="accordion-table">
+                <table border="2">
+                <tr>
+                  <th>No.</th>
+                  <th>Nama Stasiun</th>
+                  <th>Tiba</th>
+                  <th>Berangkat</th>
+                </tr>
+                <tr>
+                  <td>1</td>    <td>Semarang Tawang</td>    <td>13.13</td>  <td>13.18</td>
+                </tr>
+                <tr>
+                  <td>2</td>    <td>Bojonegoro</td>   <td>15.24</td>  <td>15.26</td>
+                </tr>
+                <tr>
+                  <td>3</td>    <td>Surabaya Pasar Turi</td>   <td>16.42</td>  <td>-</td>
+                </tr>
+                </table></div>
+
+                <!-- KA Argo Bromo Anggrek (4) -->
+                <span class="btn btn-primary btn-sm toggle-btn" onClick="toggleById('hidethis4', this);">KA Argo Bromo Anggrek (4) <i class="fa fa-caret-down"></i></span><br>
+                
+                <div id="hidethis4" class="accordion-table">
+                <table border="2">
+                <tr>
+                  <th>No.</th>
+                  <th>Nama Stasiun</th>
+                  <th>Tiba</th>
+                  <th>Berangkat</th>
+                </tr>
+                <tr>
+                  <td>1</td>    <td>Semarang Tawang</td>    <td>01.43</td>  <td>01.48</td>
+                </tr>
+                <tr>
+                  <td>2</td>    <td>Bojonegoro</td>   <td>03.54</td>  <td>03.56</td>
+                </tr>
+                <tr>
+                  <td>3</td>    <td>Surabaya Pasar Turi</td>   <td>05.12</td>  <td>-</td>
+                </tr>
+                </table></div>
+
+                <!-- KA Dharmawangsa Ekspres (130) -->
+                <span class="btn btn-primary btn-sm toggle-btn" onClick="toggleById('hidethis5', this);">KA Dharmawangsa Ekspres (130) <i class="fa fa-caret-down"></i></span><br>
+                
+                <div id="hidethis5" class="accordion-table">
+                <table border="2">
+                <tr>
+                  <th>No.</th>
+                  <th>Nama Stasiun</th>
+                  <th>Tiba</th>
+                  <th>Berangkat</th>
+                </tr>
+                <tr>
+                  <td>1</td>    <td>Semarang Tawang</td>    <td>15.15</td>  <td>15.25</td>
+                </tr>
+                <tr>
+                  <td>2</td>    <td>Ngrombo</td>   <td>16.14</td>  <td>16.16</td>
+                </tr>
+                <tr>
+                  <td>3</td>    <td>Randublatung</td>   <td>17.03</td>  <td>17.05</td>
+                </tr>
+                <tr>
+                  <td>4</td>    <td>Cepu</td>  <td>17.26</td>  <td>17.31</td>
+                </tr>
+                <tr>
+                  <td>5</td>    <td>Bojonegoro</td> <td>18.00</td>  <td>18.03</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Babat</td>    <td>18.32</td>  <td>18.35</td>
+                </tr>
+                <tr>
+                  <td>7</td>    <td>Lamongan</td> <td>18.57</td>  <td>19.00</td>
+                </tr>
+                <tr>
+                  <td>8</td>    <td>Surabaya Pasar Turi</td>    <td>19.35</td>  <td>-</td>
+                </tr>
+                </table></div>
+
+                <!-- KA Kertajaya (256) -->
+                <span class="btn btn-primary btn-sm toggle-btn" onClick="toggleById('hidethis6', this);">KA Kertajaya (256) <i class="fa fa-caret-down"></i></span><br>
+                
+                <div id="hidethis6" class="accordion-table">
+                <table border="2">
+                <tr>
+                  <th>No.</th>
+                  <th>Nama Stasiun</th>
+                  <th>Tiba</th>
+                  <th>Berangkat</th>
+                </tr>
+                <tr>
+                  <td>1</td>    <td>Semarang Tawang</td>    <td>20.51</td>  <td>21.04</td>
+                </tr>
+                <tr>
+                  <td>2</td>    <td>Ngrombo</td>   <td>21.59</td>  <td>22.01</td>
+                </tr>
+                <tr>
+                  <td>3</td>    <td>Randublatung</td>   <td>22.47</td>  <td>22.49</td>
+                </tr>
+                <tr>
+                  <td>4</td>    <td>Cepu</td>  <td>23.11</td>  <td>23.17</td>
+                </tr>
+                <tr>
+                  <td>5</td>    <td>Bojonegoro</td> <td>23.47</td>  <td>23.50</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Babat</td>    <td>00.20</td>  <td>00.23</td>
+                </tr>
+                <tr>
+                  <td>7</td>    <td>Lamongan</td> <td>00.46</td>  <td>00.49</td>
+                </tr>
+                <tr>
+                  <td>8</td>    <td>Surabaya Pasar Turi</td>    <td>01.25</td>  <td>-</td>
+                </tr>
+                </table></div>
+
+                <!-- KA Jayabaya (106 - 107) -->
+                <span class="btn btn-primary btn-sm toggle-btn" onClick="toggleById('hidethis7', this);">KA Jayabaya (106 - 107) <i class="fa fa-caret-down"></i></span><br>
+                
+                <div id="hidethis7" class="accordion-table">
+                <table border="2">
+                <tr>
+                  <th>No.</th>
+                  <th>Nama Stasiun</th>
+                  <th>Tiba</th>
+                  <th>Berangkat</th>
+                </tr>
+                <tr>
+                  <td>1</td>    <td>Semarang Poncol</td>    <td>23.08</td>  <td>23.21</td>
+                </tr>
+                <tr>
+                  <td>2</td>    <td>Ngrombo</td>   <td>00.16</td>  <td>00.18</td>
+                </tr>
+                <tr>
+                  <td>3</td>    <td>Randublatung</td>   <td>01.03</td>  <td>01.05</td>
+                </tr>
+                <tr>
+                  <td>4</td>    <td>Cepu</td>  <td>01.27</td>  <td>01.33</td>
+                </tr>
+                <tr>
+                  <td>5</td>    <td>Bojonegoro</td> <td>02.02</td>  <td>02.05</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Babat</td>    <td>02.35</td>  <td>02.38</td>
+                </tr>
+                <tr>
+                  <td>7</td>    <td>Lamongan</td> <td>03.01</td>  <td>03.04</td>
+                </tr>
+                <tr>
+                  <td>8</td>    <td>Surabaya Pasar Turi</td>    <td>03.39</td>  <td>03.50</td>
+                </tr>
+                </table></div>
+
+                <!-- KA Gumarang (128) -->
+                <span class="btn btn-primary btn-sm toggle-btn" onClick="toggleById('hidethis8', this);">KA Gumarang (128) <i class="fa fa-caret-down"></i></span><br>
+                
+                <div id="hidethis8" class="accordion-table">
+                <table border="2">
+                <tr>
+                  <th>No.</th>
+                  <th>Nama Stasiun</th>
+                  <th>Tiba</th>
+                  <th>Berangkat</th>
+                </tr>
+                <tr>
+                  <td>1</td>    <td>Semarang Tawang</td>    <td>22.21</td>  <td>22.31</td>
+                </tr>
+                <tr>
+                  <td>2</td>    <td>Ngrombo</td>   <td>23.20</td>  <td>23.23</td>
+                </tr>
+                <tr>
+                  <td>3</td>    <td>Cepu</td>   <td>00.31</td>  <td>00.38</td>
+                </tr>
+                <tr>
+                  <td>4</td>    <td>Bojonegoro</td>  <td>01.07</td>  <td>01.10</td>
+                </tr>
+                <tr>
+                  <td>5</td>    <td>Babat</td> <td>01.40</td>  <td>01.43</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Lamongan</td>    <td>02.06</td>  <td>02.09</td>
+                </tr>
+                <tr>
+                  <td>7</td>    <td>Surabaya Pasar Turi</td> <td>02.45</td>  <td>-</td>
+                </tr>
+                </table></div>
+
+                <!-- KA Harina (125 - 124) -->
+                <span class="btn btn-primary btn-sm toggle-btn" onClick="toggleById('hidethis9', this);">KA Harina (125 - 124) <i class="fa fa-caret-down"></i></span><br>
+                
+                <div id="hidethis9" class="accordion-table">
+                <table border="2">
+                <tr>
+                  <th>No.</th>
+                  <th>Nama Stasiun</th>
+                  <th>Tiba</th>
+                  <th>Berangkat</th>
+                </tr>
+                <tr>
+                  <td>1</td>    <td>Semarang Tawang</td>    <td>03.43</td>  <td>03.58</td>
+                </tr>
+                <tr>
+                  <td>2</td>    <td>Ngrombo</td>   <td>04.46</td>  <td>04.49</td>
+                </tr>
+                <tr>
+                  <td>3</td>    <td>Cepu</td>   <td>05.56</td>  <td>06.01</td>
+                </tr>
+                <tr>
+                  <td>4</td>    <td>Bojonegoro</td>  <td>06.31</td>  <td>06.34</td>
+                </tr>
+                <tr>
+                  <td>5</td>    <td>Babat</td> <td>07.03</td>  <td>07.05</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Lamongan</td>    <td>07.27</td>  <td>07.30</td>
+                </tr>
+                <tr>
+                  <td>7</td>    <td>Surabaya Pasar Turi</td> <td>08.05</td>  <td>-</td>
+                </tr>
+                </table></div>
+
+                <!-- KA Sembrani (78) -->
+                <span class="btn btn-primary btn-sm toggle-btn" onClick="toggleById('hidethis10', this);">KA Sembrani (78) <i class="fa fa-caret-down"></i></span><br>
+                
+                <div id="hidethis10" class="accordion-table">
+                <table border="2">
+                <tr>
+                  <th>No.</th>
+                  <th>Nama Stasiun</th>
+                  <th>Tiba</th>
+                  <th>Berangkat</th>
+                </tr>
+                <tr>
+                  <td>1</td>    <td>Semarang Tawang</td>    <td>00.39</td>  <td>00.44</td>
+                </tr>
+                <tr>
+                  <td>2</td>    <td>Ngrombo</td>   <td>01.31</td>  <td>01.33</td>
+                </tr>
+                <tr>
+                  <td>3</td>    <td>Cepu</td>   <td>02.34</td>  <td>02.37</td>
+                </tr>
+                <tr>
+                  <td>4</td>    <td>Bojonegoro</td>  <td>03.05</td>  <td>03.07</td>
+                </tr>
+                <tr>
+                  <td>5</td>    <td>Lamongan</td> <td>03.54</td>  <td>03.56</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Surabaya Pasar Turi</td>    <td>04.30</td>  <td>-</td>
+                </tr>
+                </table></div>
+
+                <!-- KA Blambangan Ekspres (238F - 239F) -->
+                <span class="btn btn-primary btn-sm toggle-btn" onClick="toggleById('hidethis11', this);">KA Blambangan Ekspres (238F - 239F) <i class="fa fa-caret-down"></i></span><br>
+                
+                <div id="hidethis11" class="accordion-table">
+                <table border="2">
+                <tr>
+                  <th>No.</th>
+                  <th>Nama Stasiun</th>
+                  <th>Tiba</th>
+                  <th>Berangkat</th>
+                </tr>
+                <tr>
+                  <td>1</td>    <td>Semarang Tawang</td>    <td>-</td>  <td>18.05</td>
+                </tr>
+                <tr>
+                  <td>2</td>    <td>Ngrombo</td>   <td>18.53</td>  <td>18.56</td>
+                </tr>
+                <tr>
+                  <td>3</td>    <td>Cepu</td>   <td>20.03</td>  <td>20.09</td>
+                </tr>
+                <tr>
+                  <td>4</td>    <td>Bojonegoro</td>  <td>20.38</td>  <td>20.41</td>
+                </tr>
+                <tr>
+                  <td>5</td>    <td>Lamongan</td> <td>21.32</td>  <td>21.35</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Surabaya Pasar Turi</td>    <td>22.10</td>  <td>22.20</td>
+                </tr>
+                </table></div>
+
+                <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+                <h4 style="text-align:center">Surabaya - Semarang</h4>
+
+                <!-- KA Ambarawa Ekspres (269F) -->
+                <span class="btn btn-primary btn-sm toggle-btn" onClick="toggleById('hidethis12', this);">KA Ambarawa Ekspres (269F) <i class="fa fa-caret-down"></i></span><br>
+                
+                <div id="hidethis12" class="accordion-table">
+                <table border="2">
+                <tr>
+                  <th>No.</th>
+                  <th>Nama Stasiun</th>
+                  <th>Tiba</th>
+                  <th>Berangkat</th>
+                </tr>
+                <tr>
+                  <td>1</td>    <td>Surabaya Pasar Turi</td>    <td>-</td>  <td>13.20</td>
+                </tr>
+                <tr>
+                  <td>2</td>    <td>Lamongan</td>   <td>13.54</td>  <td>13.57</td>
+                </tr>
+                <tr>
+                  <td>3</td>    <td>Babat</td>   <td>14.19</td>  <td>14.22</td>
+                </tr>
+                <tr>
+                  <td>4</td>    <td>Bojonegoro</td>  <td>14.51</td>  <td>14.54</td>
+                </tr>
+                <tr>
+                  <td>5</td>    <td>Cepu</td> <td>15.24</td>  <td>15.29</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Randublatung</td>    <td>15.51</td>  <td>15.53</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Kradenan</td>    <td>16.19</td>  <td>16.21</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Ngrombo</td>    <td>16.44</td>  <td>16.47</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Semarang Tawang</td>    <td>17.35</td>  <td>17.40</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Semarang Poncol</td>    <td>17.47</td>  <td>-</td>
+                </tr>
+                </table></div>
+
+                <!-- KA Maharani (267) -->
+                <span class="btn btn-primary btn-sm toggle-btn" onClick="toggleById('hidethis13', this);">KA Maharani (267) <i class="fa fa-caret-down"></i></span><br>
+                
+                <div id="hidethis13" class="accordion-table">
+                <table border="2">
+                <tr>
+                  <th>No.</th>
+                  <th>Nama Stasiun</th>
+                  <th>Tiba</th>
+                  <th>Berangkat</th>
+                </tr>
+                <tr>
+                  <td>1</td>    <td>Surabaya Pasar Turi</td>    <td>-</td>  <td>06.00</td>
+                </tr>
+                <tr>
+                  <td>2</td>    <td>Lamongan</td>   <td>06.34</td>  <td>06.37</td>
+                </tr>
+                <tr>
+                  <td>3</td>    <td>Babat</td>   <td>06.59</td>  <td>07.02</td>
+                </tr>
+                <tr>
+                  <td>4</td>    <td>Bojonegoro</td>  <td>07.33</td>  <td>07.36</td>
+                </tr>
+                <tr>
+                  <td>5</td>    <td>Cepu</td> <td>08.07</td>  <td>08.13</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Randublatung</td>    <td>08.36</td>  <td>08.39</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Kradenan</td>    <td>09.06</td>  <td>09.08</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Ngrombo</td>    <td>09.32</td>  <td>09.35</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Semarang Tawang</td>    <td>10.26</td>  <td>10.31</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Semarang Poncol</td>    <td>10.38</td>  <td>-</td>
+                </tr>
+                </table></div>
+
+                <!-- KA Argo Bromo Anggrek (1) -->
+                <span class="btn btn-primary btn-sm toggle-btn" onClick="toggleById('hidethis14', this);">KA Argo Bromo Anggrek (1) <i class="fa fa-caret-down"></i></span><br>
+                
+                <div id="hidethis14" class="accordion-table">
+                <table border="2">
+                <tr>
+                  <th>No.</th>
+                  <th>Nama Stasiun</th>
+                  <th>Tiba</th>
+                  <th>Berangkat</th>
+                </tr>
+                <tr>
+                  <td>1</td>    <td>Surabaya Pasar Turi</td>    <td>-</td>  <td>09.00</td>
+                </tr>
+                <tr>
+                  <td>2</td>    <td>Bojonegoro</td>   <td>10.15</td>  <td>10.17</td>
+                </tr>
+                <tr>
+                  <td>3</td>    <td>Semarang Tawang</td>   <td>12.23</td>  <td>12.28</td>
+                </tr>
+                </table></div>
+
+                <!-- KA Argo Bromo Anggrek (3) -->
+                <span class="btn btn-primary btn-sm toggle-btn" onClick="toggleById('hidethis15', this);">KA Argo Bromo Anggrek (3) <i class="fa fa-caret-down"></i></span><br>
+                
+                <div id="hidethis15" class="accordion-table">
+                <table border="2">
+                <tr>
+                  <th>No.</th>
+                  <th>Nama Stasiun</th>
+                  <th>Tiba</th>
+                  <th>Berangkat</th>
+                </tr>
+                <tr>
+                  <td>1</td>    <td>Surabaya Pasar Turi</td>    <td>-</td>  <td>20.35</td>
+                </tr>
+                <tr>
+                  <td>2</td>    <td>Bojonegoro</td>   <td>21.50</td>  <td>21.52</td>
+                </tr>
+                <tr>
+                  <td>3</td>    <td>Semarang Tawang</td>   <td>23.58</td>  <td>00.03</td>
+                </tr>
+                </table></div>
+
+                <!-- KA Dharmawangsa Ekspres (129) -->
+                <span class="btn btn-primary btn-sm toggle-btn" onClick="toggleById('hidethis16', this);">KA Dharmawangsa Ekspres (129) <i class="fa fa-caret-down"></i></span><br>
+                
+                <div id="hidethis16" class="accordion-table">
+                <table border="2">
+                <tr>
+                  <th>No.</th>
+                  <th>Nama Stasiun</th>
+                  <th>Tiba</th>
+                  <th>Berangkat</th>
+                </tr>
+                <tr>
+                  <td>1</td>    <td>Surabaya Pasar Turi</td>    <td>-</td>  <td>22.35</td>
+                </tr>
+                <tr>
+                  <td>2</td>    <td>Lamongan</td>   <td>23.09</td>  <td>23.12</td>
+                </tr>
+                <tr>
+                  <td>3</td>    <td>Babat</td>   <td>23.34</td>  <td>23.37</td>
+                </tr>
+                <tr>
+                  <td>4</td>    <td>Bojonegoro</td>  <td>00.08</td>  <td>00.11</td>
+                </tr>
+                <tr>
+                  <td>5</td>    <td>Cepu</td> <td>00.41</td>  <td>00.47</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Randublatung</td>    <td>01.11</td>  <td>01.13</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Ngrombo</td>    <td>01.59</td>  <td>02.01</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Semarang Tawang</td>    <td>02.50</td>  <td>03.00</td>
+                </tr>
+                </table></div>
+
+                <!-- KA Kertajaya (255) -->
+                <span class="btn btn-primary btn-sm toggle-btn" onClick="toggleById('hidethis17', this);">KA Kertajaya (255) <i class="fa fa-caret-down"></i></span><br>
+                
+                <div id="hidethis17" class="accordion-table">
+                <table border="2">
+                <tr>
+                  <th>No.</th>
+                  <th>Nama Stasiun</th>
+                  <th>Tiba</th>
+                  <th>Berangkat</th>
+                </tr>
+                <tr>
+                  <td>1</td>    <td>Surabaya Pasar Turi</td>    <td>-</td>  <td>21.05</td>
+                </tr>
+                <tr>
+                  <td>2</td>    <td>Lamongan</td>   <td>21.40</td>  <td>21.43</td>
+                </tr>
+                <tr>
+                  <td>3</td>    <td>Babat</td>   <td>22.07</td>  <td>22.10</td>
+                </tr>
+                <tr>
+                  <td>4</td>    <td>Bojonegoro</td>  <td>22.40</td>  <td>22.43</td>
+                </tr>
+                <tr>
+                  <td>5</td>    <td>Cepu</td> <td>23.15</td>  <td>23.22</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Randublatung</td>    <td>23.44</td>  <td>23.46</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Ngrombo</td>    <td>00.33</td>  <td>00.36</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Semarang Poncol</td>    <td>01.30</td>  <td>01.49</td>
+                </tr>
+                </table></div>
+
+                <!-- KA Jayabaya (108 - 105) -->
+                <span class="btn btn-primary btn-sm toggle-btn" onClick="toggleById('hidethis18', this);">KA Jayabaya (108 - 105) <i class="fa fa-caret-down"></i></span><br>
+                
+                <div id="hidethis18" class="accordion-table">
+                <table border="2">
+                <tr>
+                  <th>No.</th>
+                  <th>Nama Stasiun</th>
+                  <th>Tiba</th>
+                  <th>Berangkat</th>
+                </tr>
+                <tr>
+                  <td>1</td>    <td>Surabaya Pasar Turi</td>    <td>14.10</td>  <td>14.20</td>
+                </tr>
+                <tr>
+                  <td>2</td>    <td>Lamongan</td>   <td>14.54</td>  <td>14.57</td>
+                </tr>
+                <tr>
+                  <td>3</td>    <td>Babat</td>   <td>15.20</td>  <td>15.23</td>
+                </tr>
+                <tr>
+                  <td>4</td>    <td>Bojonegoro</td>  <td>15.53</td>  <td>15.56</td>
+                </tr>
+                <tr>
+                  <td>5</td>    <td>Cepu</td> <td>16.26</td>  <td>16.32</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Randublatung</td>    <td>16.53</td>  <td>16.55</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Ngrombo</td>    <td>17.43</td>  <td>17.46</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Semarang Poncol</td>    <td>18.40</td>  <td>18.53</td>
+                </tr>
+                </table></div>
+
+                <!-- KA Gumarang (127) -->
+                <span class="btn btn-primary btn-sm toggle-btn" onClick="toggleById('hidethis19', this);">KA Gumarang (127) <i class="fa fa-caret-down"></i></span><br>
+                
+                <div id="hidethis19" class="accordion-table">
+                <table border="2">
+                <tr>
+                  <th>No.</th>
+                  <th>Nama Stasiun</th>
+                  <th>Tiba</th>
+                  <th>Berangkat</th> 
+                </tr>
+                <tr>
+                  <td>1</td>    <td>Surabaya Pasar Turi</td>    <td>-</td>  <td>15.55</td>
+                </tr>
+                <tr>
+                  <td>2</td>    <td>Lamongan</td>   <td>16.29</td>  <td>16.32</td>
+                </tr>
+                <tr>
+                  <td>3</td>    <td>Babat</td>   <td>16.55</td>  <td>16.58</td>
+                </tr>
+                <tr>
+                  <td>4</td>    <td>Bojonegoro</td>  <td>17.28</td>  <td>17.31</td>
+                </tr>
+                <tr>
+                  <td>5</td>    <td>Cepu</td> <td>18.01</td>  <td>18.07</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Ngrombo</td>    <td>19.12</td>  <td>19.14</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Semarang Tawang</td>    <td>20.02</td>  <td>20.12</td>
+                </tr>
+                </table></div>
+
+                <!-- KA Harina (123 - 126) -->
+                <span class="btn btn-primary btn-sm toggle-btn" onClick="toggleById('hidethis20', this);">KA Harina (123 - 126) <i class="fa fa-caret-down"></i></span><br>
+                
+                <div id="hidethis20" class="accordion-table">
+                <table border="2">
+                <tr>
+                  <th>No.</th>
+                  <th>Nama Stasiun</th>
+                  <th>Tiba</th>
+                  <th>Berangkat</th>
+                </tr>
+                <tr>
+                  <td>1</td>    <td>Surabaya Pasar Turi</td>    <td>-</td>  <td>17.40</td>
+                </tr>
+                <tr>
+                  <td>2</td>    <td>Lamongan</td>   <td>18.14</td>  <td>18.17</td>
+                </tr>
+                <tr>
+                  <td>3</td>    <td>Babat</td>   <td>18.39</td>  <td>18.42</td>
+                </tr>
+                <tr>
+                  <td>4</td>    <td>Bojonegoro</td>  <td>19.11</td>  <td>19.14</td>
+                </tr>
+                <tr>
+                  <td>5</td>    <td>Cepu</td> <td>19.44</td>  <td>19.49</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Ngrombo</td>    <td>20.51</td>  <td>20.53</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Semarang Tawang</td>    <td>21.40</td>  <td>21.50</td>
+                </tr>
+                </table></div>
+
+                <!-- KA Sembrani (77) -->
+                <span class="btn btn-primary btn-sm toggle-btn" onClick="toggleById('hidethis21', this);">KA Sembrani (77) <i class="fa fa-caret-down"></i></span><br>
+                
+                <div id="hidethis21" class="accordion-table">
+                <table border="2">
+                <tr>
+                  <th>No.</th>
+                  <th>Nama Stasiun</th>
+                  <th>Tiba</th>
+                  <th>Berangkat</th>
+                </tr>
+                <tr>
+                  <td>1</td>    <td>Surabaya Pasar Turi</td>    <td>-</td>  <td>18.55</td>
+                </tr>
+                <tr>
+                  <td>2</td>    <td>Lamongan</td>   <td>19.28</td>  <td>19.30</td>
+                </tr>
+                <tr>
+                  <td>3</td>    <td>Bojonegoro</td>   <td>20.17</td>  <td>20.19</td>
+                </tr>
+                <tr>
+                  <td>4</td>    <td>Cepu</td>  <td>20.48</td>  <td>20.51</td>
+                </tr>
+                <tr>
+                  <td>5</td>    <td>Ngrombo</td> <td>21.51</td>  <td>21.52</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Semarang Tawang</td>    <td>22.38</td>  <td>22.43</td>
+                </tr>
+                </table></div>
+
+                <!-- KA Blambangan Ekspres (240F - 237F) -->
+                <span class="btn btn-primary btn-sm toggle-btn" onClick="toggleById('hidethis22', this);">KA Blambangan Ekspres (240F - 237F) <i class="fa fa-caret-down"></i></span><br>
+                
+                <div id="hidethis22" class="accordion-table">
+                <table border="2">
+                <tr>
+                  <th>No.</th>
+                  <th>Nama Stasiun</th>
+                  <th>Tiba</th>
+                  <th>Berangkat</th>
+                </tr>
+                <tr>
+                  <td>1</td>    <td>Surabaya Pasar Turi</td>    <td>15.03</td>  <td>15.10</td>
+                </tr>
+                <tr>
+                  <td>2</td>    <td>Lamongan</td>   <td>15.45</td>  <td>15.48</td>
+                </tr>
+                <tr>
+                  <td>3</td>    <td>Bojonegoro</td>   <td>16.41</td>  <td>16.46</td>
+                </tr>
+                <tr>
+                  <td>4</td>    <td>Cepu</td>  <td>17.17</td>  <td>17.24</td>
+                </tr>
+                <tr>
+                  <td>5</td>    <td>Ngrombo</td> <td>18.30</td>  <td>18.33</td>
+                </tr>
+                <tr>
+                  <td>6</td>    <td>Semarang Tawang</td>    <td>19.25</td>  <td>-</td>
+                </tr>
+                </table></div>
+
+                <br>
+                <ul>
+                    <li>Sumber : GAPEKA 2021</li>
+                    <li>Berlaku sejak 1 Januari 2021</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+                        <!-- ==========INI PLUGIN JS========== -->
+
+    <!-- Library dasar -->
+    <script src="https://code.jquery.com/jquery-1.11.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>    
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-timepicker/0.5.2/js/bootstrap-timepicker.js"></script>    
+
+    <!-- Leaflet dasar -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+
+    <!-- Plugin Leaflet tambahan -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.0/leaflet.awesome-markers.js"></script>
+    <script src="dist/leaflet.ajax.js"></script>
+    <script src="dist/leaflet-panel-layers-master/src/leaflet-panel-layers.js"></script>
+    <script src="dist/LeafletPlayback.js"></script>
+    <script src="dist/leaflet-sidebar-v2-master/js/leaflet-sidebar.js"></script>
+    <script src="dist/easy-button.js"></script>
+
+    <!-- Data GeoJSON atau lainnya -->
+    <script src="data/kereta.js"></script>
+    <script src="data/stasiun.js"></script>
+
+    <!-- Script kontrol dan custom -->    
+    <script src="example_2_control.js"></script>
+    <script src="example_2.js"></script>
+
+    <script src="toggle.js"></script>
+
+</body>
+</html>
